@@ -132,6 +132,23 @@ public class EEGModel {
 	public void saveFile(String fileName) throws IOException {
 		// TODO
 		File f = new File(fileName);
+		FileOutputStream fos = new FileOutputStream(f);
+		PrintStream wr = new PrintStream(fos);
+		int numero = 0;
+		for(int i = 0; i < measurements.size()-1; i++) {
+			wr.print(numero + ", ");
+			for(int j = 0; j < measurements.get(i).numChannels(); j++) {
+				wr.print(measurements.get(i).getChannel(j) + ",");
+			}
+			wr.println();
+			if(numero < 256) {
+				numero++;
+			}
+			else {
+				numero = 0;
+			}
+		}
+		fos.close();
 		
 	}
 
@@ -255,6 +272,11 @@ public class EEGModel {
 		} else {
 			EEGModel eeg = new EEGModel();
 			eeg.createSyntheticData(1000);
+			try {
+				eeg.saveFile("Synthetic.txt");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			// TODO
 			
 		}
