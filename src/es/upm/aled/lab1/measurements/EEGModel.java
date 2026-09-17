@@ -131,7 +131,7 @@ public class EEGModel {
 	 */
 	public void saveFile(String fileName) throws IOException {
 		// TODO
-		
+		File f = new File(fileName);
 		
 	}
 
