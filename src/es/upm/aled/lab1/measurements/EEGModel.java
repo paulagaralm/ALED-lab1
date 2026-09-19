@@ -135,13 +135,16 @@ public class EEGModel {
 		FileOutputStream fos = new FileOutputStream(f);
 		PrintStream wr = new PrintStream(fos);
 		int numero = 0;
-		for(int i = 0; i < measurements.size()-1; i++) {
+		for(int i = 0; i < measurements.size(); i++) {
 			wr.print(numero + ", ");
 			for(int j = 0; j < measurements.get(i).numChannels(); j++) {
-				wr.print(measurements.get(i).getChannel(j) + ",");
+				wr.print(measurements.get(i).getChannel(j));
+				if(j < measurements.get(i).numChannels() - 1) {
+					wr.print(", ");
+				}
 			}
 			wr.println();
-			if(numero < 256) {
+			if(numero < 255) {
 				numero++;
 			}
 			else {
@@ -149,7 +152,6 @@ public class EEGModel {
 			}
 		}
 		fos.close();
-		
 	}
 
 	/**

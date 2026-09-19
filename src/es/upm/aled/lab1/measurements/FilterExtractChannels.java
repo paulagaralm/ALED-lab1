@@ -15,14 +15,18 @@ public class FilterExtractChannels implements Filter {
 	 */
 	public FilterExtractChannels(int[] validChannels) {
 		// TODO
-		
+		for(int i = 0; i < validChannels.length; i++) {
+			
+			i++;
+		}
+		EEGModel eegfilter = new EEGModel();
 	}
 
 	@Override
 	public EEGModel applyFilter(EEGModel eeg) {
 		// TODO
-		
-		return null;
+		EEGModel eegfiltrado = new EEGModel();
+		return eegfiltrado;
 	}
 
 }
