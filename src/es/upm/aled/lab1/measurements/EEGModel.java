@@ -57,7 +57,9 @@ public class EEGModel {
 	 */
 	public EEGModel(Measurement[] measurements) {
 		// TODO
-		
+		for (int i = 0; i < measurements.length; i++) {
+			addMeasurement(measurements[i]);
+		}
 	}
 
 	/**
@@ -130,7 +132,6 @@ public class EEGModel {
 	 * @throws IOException Thrown if the file can't be written.
 	 */
 	public void saveFile(String fileName) throws IOException {
-		// TODO
 		File f = new File(fileName);
 		FileOutputStream fos = new FileOutputStream(f);
 		PrintStream wr = new PrintStream(fos);

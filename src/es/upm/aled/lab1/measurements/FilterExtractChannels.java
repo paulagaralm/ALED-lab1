@@ -16,8 +16,8 @@ public class FilterExtractChannels implements Filter {
 	public FilterExtractChannels(int[] validChannels) {
 		// TODO
 		for(int i = 0; i < validChannels.length; i++) {
-			
-			i++;
+		      int originalChannelIndex = validChannels[i];
+              newValues[i] = originalModel.getSample(originalChannelIndex, s);
 		}
 		EEGModel eegfilter = new EEGModel();
 	}
@@ -25,6 +25,7 @@ public class FilterExtractChannels implements Filter {
 	@Override
 	public EEGModel applyFilter(EEGModel eeg) {
 		// TODO
+		//FilterExtractChannels fec = new FilterExtractChannel();
 		EEGModel eegfiltrado = new EEGModel();
 		return eegfiltrado;
 	}
