@@ -56,10 +56,10 @@ public class EEGModel {
 	 * @param measurements The Measurements that make up the EEGModel.
 	 */
 	public EEGModel(Measurement[] measurements) {
-		// TODO
-		for (int i = 0; i < measurements.length; i++) {
-			addMeasurement(measurements[i]);
-		}
+		this.measurements = Arrays.asList(measurements);
+//		for (int i = 0; i < measurements.length; i++) { //se recorre del array de medidas
+//			this.measurements.add(measurements[i]); //se añaden las medidas en la lista
+//		} //en esta propuesta, el tamaño de la lista se podría modificar
 	}
 
 	/**
@@ -90,10 +90,8 @@ public class EEGModel {
 	 * @param filter Filter to be applied over the EEGModel.
 	 * @return The new EEGModel.
 	 */
-	public EEGModel filter(Filter filter) {
-		// TODO
-		
-		return null;
+	public EEGModel filter(Filter filter) { //se aplica un filtro sobre sí mismo
+		return filter.applyFilter(this);
 	}
 
 	/**
@@ -132,27 +130,27 @@ public class EEGModel {
 	 * @throws IOException Thrown if the file can't be written.
 	 */
 	public void saveFile(String fileName) throws IOException {
-		File f = new File(fileName);
-		FileOutputStream fos = new FileOutputStream(f);
-		PrintStream wr = new PrintStream(fos);
-		int numero = 0;
-		for(int i = 0; i < measurements.size(); i++) {
-			wr.print(numero + ", ");
-			for(int j = 0; j < measurements.get(i).numChannels(); j++) {
-				wr.print(measurements.get(i).getChannel(j));
-				if(j < measurements.get(i).numChannels() - 1) {
+		File f = new File(fileName); //se define dónde se creará o se encuentra el archivo
+		FileOutputStream fos = new FileOutputStream(f); //abre una conexión de bajo nivel para escribir bytes
+		PrintStream wr = new PrintStream(fos); //envuelve el flujo de bytes para escribir texto
+		int numero = 0; //variable que indica el número de muestra
+		for(Measurement measurement : measurements) { //se recorre la lista de medidas
+			wr.print(numero + ", "); //se escribe en la misma línea el número y la coma
+			for(int i = 0; i < measurement.numChannels(); i++) { //se recorre la lista de medidas
+				wr.print(measurement.getChannel(i)); //se escribe el contenido del canal
+				if(i < measurement.numChannels() - 1) { //se escribe una coma salvo si es el último elemento en la línea
 					wr.print(", ");
 				}
 			}
-			wr.println();
-			if(numero < 255) {
+			wr.println(); //se introduce un salto de línea
+			if(numero < 255) { //se aumenta el número de muestra hasta 255
 				numero++;
 			}
-			else {
+			else { //se reinicia el número de muestra
 				numero = 0;
 			}
 		}
-		fos.close();
+		wr.close(); //se cierran los flujos
 	}
 
 	/**
@@ -270,18 +268,30 @@ public class EEGModel {
 		if (args.length > 0) {
 			EEGModel eeg = new EEGModel(args[0]);
 			eeg.plotData();
-			// TODO
-			
+			int[] canalesDeseados = {8, 9, 10}; //array de ints con los canales que se quieren filtrar
+			Filter filtroCanales = new FilterExtractChannels(canalesDeseados); //se crea un filtro de tipo canales
+			int min = 2750; //muestra mínima que se quiere obtener tras el filtrado
+			int max = 5750; //muestra máxima que se quiere obtener tras el filtrado
+			Filter filtroPeriodo = new FilterExtractPeriod(min,max); //se crea un filtro de tipo periodo
+			EEGModel eegFiltrado = eeg.filter(filtroCanales).filter(filtroPeriodo); //se aplican los dos filtros al eeg
+			eegFiltrado.plotData(); //se pinta el eeg
+			try {
+				eegFiltrado.saveFile("DatosFiltrados.txt"); //se guarda el archivo generado con el eeg filtrado
+			} catch(IOException e) {
+				System.out.println("Error al escribir el fichero. ¿Tienes acceso o la carpeta existe?");
+				e.printStackTrace();
+			}
 		} else {
 			EEGModel eeg = new EEGModel();
 			eeg.createSyntheticData(1000);
 			try {
-				eeg.saveFile("Synthetic.txt");
+				eeg.saveFile("Synthetic.txt"); //se guarda la sesión sintética
+				EEGModel eegArchivo = new EEGModel("Synthetic.txt"); //se crea un eeg a partir del fichero indicado
+				eegArchivo.plotData(); //se pinta el eeg
 			} catch (IOException e) {
+				System.out.println("Error al escribir el fichero. ¿Tienes acceso o la carpeta existe?");
 				e.printStackTrace();
 			}
-			// TODO
-			
 		}
 	}
 }
